@@ -1,20 +1,15 @@
-import numpy as np
 import torch
 from torch_utils import persistence
 from torch.nn.functional import silu
+import numpy as np
 
-#----------------------------------------------------------------------------
-# Unified routine for initializing weights and biases.
-
+# Define weight_init function
 def weight_init(shape, mode, fan_in, fan_out):
     if mode == 'xavier_uniform': return np.sqrt(6 / (fan_in + fan_out)) * (torch.rand(*shape) * 2 - 1)
     if mode == 'xavier_normal':  return np.sqrt(2 / (fan_in + fan_out)) * torch.randn(*shape)
     if mode == 'kaiming_uniform': return np.sqrt(3 / fan_in) * (torch.rand(*shape) * 2 - 1)
     if mode == 'kaiming_normal':  return np.sqrt(1 / fan_in) * torch.randn(*shape)
     raise ValueError(f'Invalid init mode "{mode}"')
-
-#----------------------------------------------------------------------------
-# Fully-connected layer.
 
 @persistence.persistent_class
 class Linear(torch.nn.Module):
@@ -32,9 +27,6 @@ class Linear(torch.nn.Module):
             x = x.add_(self.bias.to(x.dtype))
         return x
 
-#----------------------------------------------------------------------------
-# Timestep embedding used in the DDPM++ and ADM architectures.
-
 @persistence.persistent_class
 class PositionalEmbedding(torch.nn.Module):
     def __init__(self, num_channels, max_positions=10000, endpoint=False):
@@ -51,8 +43,6 @@ class PositionalEmbedding(torch.nn.Module):
         x = torch.cat([x.cos(), x.sin()], dim=1)
         return x
 
-#----------------------------------------------------------------------------
-
 @persistence.persistent_class
 class AMED_predictor(torch.nn.Module):
     def __init__(
@@ -62,35 +52,24 @@ class AMED_predictor(torch.nn.Module):
         bottleneck_input_dim=64,
         bottleneck_output_dim=4,
         noise_channels=8,
-        embedding_type='positional',
-        dataset_name=None,
-        img_resolution=None,
-        num_steps=None,
-        sampler_tea=None,
-        sampler_stu=None,
-        M=None,
-        guidance_type=None,
-        guidance_rate=None,
-        schedule_type=None,
-        schedule_rho=None,
-        afs=False,
-        scale_dir=0,
+        num_steps=4,
+        sampler_stu='amed',
+        sampler_tea='heun',
+        guidance_type='uncond',
+        guidance_rate=1.0,
+        schedule_type='polynomial',
+        schedule_rho=7,
+        afs=True,
+        scale_dir=0.01,
         scale_time=0,
-        max_order=None,
+        max_order=3,
         predict_x0=True,
         lower_order_final=True,
     ):
         super().__init__()
-        assert sampler_stu in ['amed', 'dpm', 'dpmpp', 'euler', 'ipndm']
-        assert sampler_tea in ['heun', 'dpm', 'dpmpp', 'euler', 'ipndm']
-        assert scale_dir >= 0
-        assert scale_time >= 0
-        self.dataset_name = dataset_name
-        self.img_resolution = img_resolution
         self.num_steps = num_steps
         self.sampler_stu = sampler_stu
         self.sampler_tea = sampler_tea
-        self.M = M
         self.guidance_type = guidance_type
         self.guidance_rate = guidance_rate
         self.schedule_type = schedule_type
@@ -115,7 +94,6 @@ class AMED_predictor(torch.nn.Module):
         self.sigmoid = torch.nn.Sigmoid()
 
     def forward(self, unet_bottleneck, t_cur, t_next, class_labels=None):
-        # Time embeddings
         emb = self.map_noise(t_cur.reshape(1,))
         emb = emb.reshape(emb.shape[0], 2, -1).flip(1).reshape(*emb.shape)
         emb = silu(self.map_layer0(emb)).repeat(unet_bottleneck.shape[0], 1)
@@ -124,7 +102,6 @@ class AMED_predictor(torch.nn.Module):
         emb1 = silu(self.map_layer0(emb1)).repeat(unet_bottleneck.shape[0], 1)
         emb = torch.cat((emb, emb1), dim=1)
 
-        # Encode UNet bottleneck (guided diffusion compatible)
         unet_bottleneck = unet_bottleneck.reshape(unet_bottleneck.shape[0], -1)
         unet_bottleneck = self.enc_layer0(unet_bottleneck)
         unet_bottleneck = silu(unet_bottleneck)
