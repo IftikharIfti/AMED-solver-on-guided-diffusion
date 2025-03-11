@@ -161,8 +161,7 @@ def training_loop(
 
         # Generate teacher trajectories
         with torch.no_grad():
-            teacher_traj = loss_fn.get_teacher_traj(net=net, tensor_in=latents, labels=labels, condition=c, unconditional_condition=uc)
-
+            teacher_traj = loss_fn.get_teacher_traj(net=net, tensor_in=latents, labels=labels)
         # Training steps
         for step_idx in range(loss_fn.num_steps - 1):
             optimizer.zero_grad(set_to_none=True)

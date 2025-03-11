@@ -1,0 +1,46 @@
+{
+  "loss_kwargs": {
+    "class_name": "training.loss.AMED_loss"
+  },
+  "AMED_kwargs": {
+    "class_name": "training.networks.AMED_predictor",
+    "num_steps": 4,
+    "sampler_stu": "amed",
+    "sampler_tea": "dpmpp",
+    "M": 1,
+    "guidance_type": "cg",
+    "guidance_rate": 1.0,
+    "schedule_rho": 7.0,
+    "schedule_type": "polynomial",
+    "afs": true,
+    "dataset_name": "imagenet256",
+    "scale_dir": 0.01,
+    "scale_time": 0.0,
+    "max_order": 3,
+    "predict_x0": true,
+    "lower_order_final": true
+  },
+  "optimizer_kwargs": {
+    "class_name": "torch.optim.Adam",
+    "lr": 0.005,
+    "betas": [
+      0.9,
+      0.999
+    ],
+    "eps": 1e-08
+  },
+  "total_kimg": 100,
+  "kimg_per_tick": 1,
+  "snapshot_ticks": 100,
+  "state_dump_ticks": 100,
+  "dataset_name": "imagenet256",
+  "batch_size": 8,
+  "batch_gpu": 4,
+  "gpus": 1,
+  "cudnn_benchmark": true,
+  "guidance_type": "cg",
+  "guidance_rate": 1.0,
+  "prompt_path": null,
+  "seed": 644891164,
+  "run_dir": "./exps/00006-imagenet256-4-5-amed-dpmpp-1-poly7.0-afsamed-dpmpp-cg"
+}

@@ -59,6 +59,9 @@ class AMED_predictor(torch.nn.Module):
         guidance_rate=1.0,
         schedule_type='polynomial',
         schedule_rho=7,
+        dataset_name= None,
+        img_resolution= None,
+        M= None,
         afs=True,
         scale_dir=0.01,
         scale_time=0,
@@ -74,6 +77,9 @@ class AMED_predictor(torch.nn.Module):
         self.guidance_rate = guidance_rate
         self.schedule_type = schedule_type
         self.schedule_rho = schedule_rho
+        self.dataset_name = dataset_name
+        self.img_resolution = img_resolution
+        self.M = M
         self.afs = afs
         self.scale_dir = scale_dir
         self.scale_time = scale_time

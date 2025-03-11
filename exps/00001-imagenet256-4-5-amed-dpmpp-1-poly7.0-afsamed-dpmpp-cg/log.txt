@@ -1,0 +1,25 @@
+Model already exists: ../amed-solver-main/src/imagenet256/256x256_diffusion.pt
+Classifier already exists: ../amed-solver-main/src/imagenet256-classifier/256x256_classifier.pt
+Loading the pre-trained guided diffusion model from "../amed-solver-main/src/imagenet256/256x256_diffusion.pt"...
+[rank0]: Traceback (most recent call last):
+[rank0]:   File "/home/deeplearning01/IftiNamiYusuf/amed-adm only/amed-solver-main/train.py", line 159, in <module>
+[rank0]:     main()
+[rank0]:   File "/home/deeplearning01/anaconda3/envs/M2S/lib/python3.9/site-packages/click/core.py", line 1161, in __call__
+[rank0]:     return self.main(*args, **kwargs)
+[rank0]:   File "/home/deeplearning01/anaconda3/envs/M2S/lib/python3.9/site-packages/click/core.py", line 1082, in main
+[rank0]:     rv = self.invoke(ctx)
+[rank0]:   File "/home/deeplearning01/anaconda3/envs/M2S/lib/python3.9/site-packages/click/core.py", line 1443, in invoke
+[rank0]:     return ctx.invoke(self.callback, **ctx.params)
+[rank0]:   File "/home/deeplearning01/anaconda3/envs/M2S/lib/python3.9/site-packages/click/core.py", line 788, in invoke
+[rank0]:     return __callback(*args, **kwargs)
+[rank0]:   File "/home/deeplearning01/IftiNamiYusuf/amed-adm only/amed-solver-main/train.py", line 154, in main
+[rank0]:     training_loop.training_loop(**c)
+[rank0]:   File "/home/deeplearning01/IftiNamiYusuf/amed-adm only/amed-solver-main/training/training_loop.py", line 116, in training_loop
+[rank0]:     net = create_model(dataset_name, guidance_type, guidance_rate, device)
+[rank0]:   File "/home/deeplearning01/IftiNamiYusuf/amed-adm only/amed-solver-main/training/training_loop.py", line 51, in create_model
+[rank0]:     net, classifier = load_cg_model(model_path, classifier_path)
+[rank0]:   File "/home/deeplearning01/IftiNamiYusuf/amed-adm only/amed-solver-main/models/guided_diffusion/cg_model_loader.py", line 79, in load_cg_model
+[rank0]:     if model.use_fp16:
+[rank0]:   File "/home/deeplearning01/anaconda3/envs/M2S/lib/python3.9/site-packages/torch/nn/modules/module.py", line 1928, in __getattr__
+[rank0]:     raise AttributeError(
+[rank0]: AttributeError: 'UNetModel' object has no attribute 'use_fp16'
